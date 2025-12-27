@@ -1,7 +1,6 @@
 using test_service.Configuration;
 using test_service.Data;
 using SharedKernel.Messaging;
-using SharedKernel.Configuration;
 using Infrastructure.Messaging;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,12 +28,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMongoDB(mongoDbSettings.ConnectionString, mongoDbSettings.DatabaseName);
 });
 
-// Configure RabbitMQ
-builder.Services.Configure<RabbitMqSettings>(
-    builder.Configuration.GetSection(RabbitMqSettings.SectionName));
+// Configure RabbitMQ - Get connection string directly
+var rabbitMqConnectionString = builder.Configuration["RabbitMq:ConnectionString"]
+    ?? throw new InvalidOperationException("RabbitMQ connection string not configured");
 
-// Register RabbitMQ Message Bus as Singleton
-builder.Services.AddSingleton<IMessageBus, RabbitMqMessageBus>();
+// Register RabbitMQ Message Bus with connection string
+builder.Services.AddSingleton<IMessageBus>(sp =>
+{
+    var logger = sp.GetRequiredService<ILogger<RabbitMqMessageBus>>();
+    return new RabbitMqMessageBus(rabbitMqConnectionString, logger);
+});
 
 var app = builder.Build();
 
@@ -46,24 +49,24 @@ using (var scope = app.Services.CreateScope())
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         // This will create the database and apply any pending migrations
         await dbContext.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("? MongoDB database initialized successfully");
+        app.Logger.LogInformation("? MongoDB initialized");
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "? Failed to initialize MongoDB database");
+        app.Logger.LogError(ex, "? MongoDB initialization failed");
     }
 }
 
-// Initialize RabbitMQ connection
+// Initialize RabbitMQ
 try
 {
     var messageBus = app.Services.GetRequiredService<IMessageBus>();
     await messageBus.ConnectAsync();
-    app.Logger.LogInformation("? Successfully connected to RabbitMQ");
+    app.Logger.LogInformation("? RabbitMQ connected");
 }
 catch (Exception ex)
 {
-    app.Logger.LogError(ex, "? Failed to connect to RabbitMQ. Message bus features will not work.");
+    app.Logger.LogError(ex, "? RabbitMQ connection failed");
 }
 
 // Configure HTTP request pipeline
@@ -78,6 +81,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Logger.LogInformation("?? Medicine API started - Ready to accept medicine creation commands");
+app.Logger.LogInformation("?? Medicine API Ready - DDD Event-Driven Architecture");
 
 app.Run();
