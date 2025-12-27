@@ -1,4 +1,4 @@
-namespace test_service.Services;
+namespace SharedKernel.Messaging;
 
 /// <summary>
 /// Interface for message bus operations
@@ -6,7 +6,7 @@ namespace test_service.Services;
 public interface IMessageBus
 {
     /// <summary>
-/// Publishes a message to the specified queue
+    /// Publishes a message to the specified queue
     /// </summary>
     Task PublishAsync<T>(string queueName, T message, CancellationToken cancellationToken = default) where T : class;
 

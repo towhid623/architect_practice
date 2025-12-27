@@ -1,0 +1,7 @@
+using SharedKernel.CQRS;
+using SharedKernel.Common;
+using SharedKernel.DTOs.Medicine;
+
+namespace SharedKernel.Queries.Medicine;
+
+public record GetMedicineByIdQuery(string Id) : IQuery<Result<MedicineResponse>>;

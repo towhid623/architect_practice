@@ -1,4 +1,4 @@
-using test_service.Services;
+using SharedKernel.Messaging;
 using test_service.Models;
 
 namespace test_service.BackgroundServices;
@@ -16,7 +16,7 @@ public class MessageConsumerService : BackgroundService
     {
         _messageBus = messageBus;
    _logger = logger;
-}
+    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

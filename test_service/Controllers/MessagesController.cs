@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using test_service.Services;
+using SharedKernel.Messaging;
 using test_service.Models;
 
 namespace test_service.Controllers;
