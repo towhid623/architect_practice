@@ -1,14 +1,10 @@
+using SharedKernel.Configuration;
+
 namespace test_service.Configuration;
 
 /// <summary>
-/// RabbitMQ configuration settings
+/// Re-export RabbitMqSettings from SharedKernel for backward compatibility
 /// </summary>
-public class RabbitMqSettings
+public class RabbitMqSettings : SharedKernel.Configuration.RabbitMqSettings
 {
-    public const string SectionName = "RabbitMq";
-
-    /// <summary>
-    /// Connection string for RabbitMQ (AMQP URI)
-  /// </summary>
-    public string ConnectionString { get; set; } = string.Empty;
 }

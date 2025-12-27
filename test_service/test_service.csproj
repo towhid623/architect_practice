@@ -18,4 +18,13 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BackgroundServices\" />
+    <Folder Include="Examples\" />
+    <Folder Include="Handlers\Medicine\" />
+    <Folder Include="Models\DTOs\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
